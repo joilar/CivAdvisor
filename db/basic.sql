@@ -14,10 +14,17 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-PRAGMA foreign_keys = ON;
+PRAGMA foreign_keys = OFF;
 
 DROP TABLE IF EXISTS "Cards";
+DROP TABLE IF EXISTS "Groups";
+DROP TABLE IF EXISTS "CardGroups";
+
+PRAGMA foreign_keys = ON;
+
 CREATE TABLE "Cards" ("id" INTEGER PRIMARY KEY  NOT NULL , "name" VARCHAR, "value" INTEGER, "text" VARCHAR);
+CREATE TABLE "Groups" ("id" INTEGER PRIMARY KEY  NOT NULL , "name" VARCHAR, "credit" INTEGER);
+CREATE TABLE "CardGroups" ("cardId" REFERENCES Cards, "groupId" REFERENCES Groups);
 
 INSERT INTO "Cards" ("name", "value", "text") VALUES ('Pottery',45,'During FAMINE, reduce loss by 4 unit points per GRAIN trade card held.');
 INSERT INTO "Cards" ("name", "value", "text") VALUES ('Cloth Making',45,'Ships allowed an extra move.');
@@ -36,16 +43,10 @@ INSERT INTO "Cards" ("name", "value", "text") VALUES ('Democracy',200,'During CI
 INSERT INTO "Cards" ("name", "value", "text") VALUES ('Law',170,'During ICONOCLASM & HERESY, lose only 3 cities. During HERESY orders, lose only 1 city. During CIVIL DISORDER, only cities in excess of 5 are reduced.');
 INSERT INTO "Cards" ("name", "value", "text") VALUES ('Philosophy',240,'During ICONOCLASM & HERESY, lose only 2 cities. Immune to HERESY orders. During CIVIL WAR, only 15 units form first faction. Units chosen by player with most tokens in stock.');
 
-DROP TABLE IF EXISTS "Groups";
-CREATE TABLE "Groups" ("id" INTEGER PRIMARY KEY  NOT NULL , "name" VARCHAR, "credit" INTEGER);
-
 INSERT INTO "Groups" ("name", "credit") VALUES ('Crafts',10);
 INSERT INTO "Groups" ("name", "credit") VALUES ('Arts',5);
 INSERT INTO "Groups" ("name", "credit") VALUES ('Science',20);
 INSERT INTO "Groups" ("name", "credit") VALUES ('Civics',0);
-
-DROP TABLE IF EXISTS "CardGroups";
-CREATE TABLE "CardGroups" ("cardId" REFERENCES Cards, "groupId" REFERENCES Groups);
 
 INSERT INTO "CardGroups" VALUES((SELECT "id" FROM "Cards" WHERE "name" = 'Pottery'), (SELECT "id" FROM "Groups" WHERE "name" = 'Crafts'));
 INSERT INTO "CardGroups" VALUES((SELECT "id" FROM "Cards" WHERE "name" = 'Cloth Making'), (SELECT "id" FROM "Groups" WHERE "name" = 'Crafts'));
