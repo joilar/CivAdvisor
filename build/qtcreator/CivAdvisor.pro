@@ -16,3 +16,12 @@ include(deployment.pri)
 
 OTHER_FILES += \
     ../../db/basic.sql
+
+# Custom targets for application databases.
+basicdb.target = basic.sqlite
+basicdb.depends = $$absolute_path( $$find(OTHER_FILES, basic.sql), $$_PRO_FILE_PWD_ )
+basicdb.commands = sqlite3 $$basicdb.target < $$basicdb.depends
+
+QMAKE_EXTRA_TARGETS += basicdb
+POST_TARGETDEPS += $$basicdb.target
+QMAKE_CLEAN += $$basicdb.target
