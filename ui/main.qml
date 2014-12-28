@@ -35,10 +35,25 @@ ApplicationWindow {
                 onTriggered: Qt.quit();
             }
         }
+        Menu {
+            title: qsTr("Civ")
+            MenuItem {
+                text: qsTr("&Basic")
+                onTriggered: console.log("Basic Civ selected.");
+            }
+            MenuItem {
+                text: qsTr("&Advanced")
+                onTriggered: console.log("Advanced Civ selected.");
+            }
+        }
     }
 
-    Text {
-        text: qsTr("Hello World")
-        anchors.centerIn: parent
+    ListView {
+        id: cardListView
+        anchors.fill: parent
+        model: cardListModel
+        delegate: Text {
+            text: model.modelData
+        }
     }
 }

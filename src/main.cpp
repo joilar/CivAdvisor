@@ -16,12 +16,66 @@
 
 #include <QApplication>
 #include <QQmlApplicationEngine>
+#include <QQmlContext>
+#include <QTextStream>
+#include <QtSql>
 
 int main(int argc, char *argv[])
 {
     QApplication app(argc, argv);
 
+    QTextStream out(stdout);
+    out << "Hello world!" << endl;
+
+    QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE");
+    db.setDatabaseName("basic.sqlite");
+    bool ok = db.open();
+
+    out << "What is the database name? " << db.databaseName() << endl;
+    out << "Did I connect to " << db.databaseName() << "? " << ok << endl;
+    out << "Is the connection valid? " << db.isValid() << endl;
+    out << "Is the connection open? " << db.isOpen() << endl;
+    out << "What is the driver name? " << db.driverName() << endl;
+    out << "What is the host name? " << db.hostName() << endl;
+    out << "What is the connection name? " << db.connectionName() << endl;
+    out << "What are the connection options? " << db.connectOptions() << endl;
+
+    bool hasQuerySize = db.driver()->hasFeature(QSqlDriver::QuerySize);
+    out << "Does sqlite support querying the result set size? " << hasQuerySize << endl;
+
+    out << "Tables:";
+    QStringList tables = db.tables();
+    foreach (QString table, tables) {
+        out << " " << table;
+    }
+    out << endl;
+
+    QSqlQuery query;
+    query.setForwardOnly(true);
+    query.exec("SELECT * from cards");
+
+    if (hasQuerySize) {
+        out << "Querying cards (" << query.size() << " results):" << endl;
+    } else {
+        out << "Querying cards:" << endl;
+    }
+
+    QStringList cards;
+
+    int count = 0;
+    while(query.next()) {
+        count++;
+        QString card = query.value(1).toString();
+        cards << card;
+        out << card << endl;
+    }
+
+    out << count << " results." << endl;
+
+    db.close();
+
     QQmlApplicationEngine engine;
+    engine.rootContext()->setContextProperty("cardListModel", QVariant::fromValue(cards));
     engine.load(QUrl(QStringLiteral("qrc:/main.qml")));
 
     return app.exec();
