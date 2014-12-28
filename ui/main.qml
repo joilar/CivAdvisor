@@ -16,6 +16,7 @@
 
 import QtQuick 2.3
 import QtQuick.Controls 1.2
+import QtQuick.Layouts 1.1
 
 ApplicationWindow {
     visible: true
@@ -48,12 +49,37 @@ ApplicationWindow {
         }
     }
 
-    ListView {
-        id: cardListView
+    Action {
+        id: cardAction
+        onTriggered: console.log(source.text)
+    }
+
+    RowLayout {
+        id: layout
         anchors.fill: parent
-        model: cardListModel
-        delegate: Text {
-            text: model.modelData
+        anchors.margins: 4
+        spacing: 4
+
+        Rectangle {
+            color: "pink"
+            Layout.fillHeight: true
+            Layout.fillWidth: true
+            ListView {
+                id: cardListView
+                anchors.fill: parent
+                model: cardListModel
+                delegate: Button {
+                    anchors.horizontalCenter: parent.horizontalCenter
+                    text: model.modelData
+                    action: cardAction
+                }
+            }
+        }
+
+        Rectangle {
+            color: "lightgreen"
+            Layout.fillHeight: true
+            Layout.fillWidth: true
         }
     }
 }
