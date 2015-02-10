@@ -51,7 +51,7 @@ ApplicationWindow {
 
     Action {
         id: advanceAction
-        onTriggered: console.log(source.text)
+        onTriggered: console.log(source.advance.name)
     }
 
     RowLayout {
@@ -69,10 +69,17 @@ ApplicationWindow {
                 anchors.fill: parent
                 model: advanceListModel
                 delegate: Button {
+                    property var advance: model.modelData
+
                     width: 120
                     anchors.horizontalCenter: parent.horizontalCenter
-                    text: name;
                     action: advanceAction
+
+                    Text {
+                        text: advance.name
+                        anchors.centerIn: parent
+                        renderType: Text.NativeRendering
+                    }
                 }
             }
 
