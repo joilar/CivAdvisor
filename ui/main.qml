@@ -71,7 +71,7 @@ ApplicationWindow {
                 delegate: Button {
                     width: 120
                     anchors.horizontalCenter: parent.horizontalCenter
-                    text: model.modelData.getProperty("name");
+                    text: name;
                     action: advanceAction
                 }
             }

@@ -20,7 +20,7 @@
 #include <QTextStream>
 #include <QtSql>
 
-#include "civ/object.h"
+#include "civ/advance.h"
 
 int main(int argc, char *argv[])
 {
@@ -74,7 +74,7 @@ int main(int argc, char *argv[])
     QList<QObject*> advances;
 
     while(query.next()) {
-        Civilization::Object *advance = new Civilization::Object();
+        Civilization::Advance *advance = new Civilization::Advance();
 
         out << "advance " << advances.size() << ":";
 

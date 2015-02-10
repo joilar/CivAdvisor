@@ -3,11 +3,13 @@ TEMPLATE = app
 QT += qml quick widgets sql
 
 HEADERS += \
-    ../../src/civ/object.h
+    ../../src/civ/object.h \
+    ../../src/civ/advance.h
 
 SOURCES += \
     ../../src/main.cpp \
-    ../../src/civ/object.cpp
+    ../../src/civ/object.cpp \
+    ../../src/civ/advance.cpp
 
 RESOURCES += \
     ../../ui/qml.qrc
