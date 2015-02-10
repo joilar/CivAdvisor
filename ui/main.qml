@@ -69,9 +69,18 @@ ApplicationWindow {
                 anchors.fill: parent
                 model: cardListModel
                 delegate: Button {
+                    width: 120
                     anchors.horizontalCenter: parent.horizontalCenter
-                    text: model.modelData
+                    text: model.modelData.getProperty("name");
                     action: cardAction
+                }
+            }
+
+            Component.onCompleted: {
+                var obj = cardListModel[0];
+                print("obj is " + typeof(obj));
+                for (var prop in obj) {
+                    print(prop += " (" + typeof(obj[prop]) + ") = " + obj[prop]);
                 }
             }
         }

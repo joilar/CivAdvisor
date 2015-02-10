@@ -20,6 +20,8 @@
 #include <QTextStream>
 #include <QtSql>
 
+#include "civ/object.h"
+
 int main(int argc, char *argv[])
 {
     QApplication app(argc, argv);
@@ -60,17 +62,43 @@ int main(int argc, char *argv[])
         out << "Querying cards:" << endl;
     }
 
-    QStringList cards;
+    QStringList columns;
 
-    int count = 0;
-    while(query.next()) {
-        count++;
-        QString card = query.value(1).toString();
-        cards << card;
-        out << card << endl;
+    QSqlRecord record = query.record();
+    out << "Number of columns: " << record.count() << endl;
+    for (int i = 0; i < record.count(); i++) {
+        out << "column " << i << ": " << record.fieldName(i) << endl;
+        columns.append(record.fieldName(i));
     }
 
-    out << count << " results." << endl;
+    QList<QObject*> cards;
+
+    while(query.next()) {
+        Civilization::Object *card = new Civilization::Object();
+
+        out << "card " << cards.size() << ":";
+
+        for (int i = 0; i < columns.size(); i++) {
+            out << " " << columns[i] << ": " << query.value(i).toString();
+            QVariant v(query.value(i).toString());
+            card->setProperty(columns[i].toLatin1().data(), v);
+        }
+
+        out << endl;
+
+        cards.append(card);
+    }
+
+    out << cards.size() << " results." << endl;
+
+    out << "card 0: " << cards[0]->property("name").toString() << endl;
+    out << "typename: " << cards[0]->property("name").typeName() << endl;
+
+    out << "properties: ";
+    for(QByteArray str : cards[0]->dynamicPropertyNames()) {
+        out << str << ": " << cards[0]->property(str.data()).toString() << ", ";
+    }
+    out << endl;
 
     db.close();
 
