@@ -50,7 +50,7 @@ ApplicationWindow {
     }
 
     Action {
-        id: cardAction
+        id: advanceAction
         onTriggered: console.log(source.text)
     }
 
@@ -65,19 +65,19 @@ ApplicationWindow {
             Layout.fillHeight: true
             Layout.fillWidth: true
             ListView {
-                id: cardListView
+                id: advanceListView
                 anchors.fill: parent
-                model: cardListModel
+                model: advanceListModel
                 delegate: Button {
                     width: 120
                     anchors.horizontalCenter: parent.horizontalCenter
                     text: model.modelData.getProperty("name");
-                    action: cardAction
+                    action: advanceAction
                 }
             }
 
             Component.onCompleted: {
-                var obj = cardListModel[0];
+                var obj = advanceListModel[0];
                 print("obj is " + typeof(obj));
                 for (var prop in obj) {
                     print(prop += " (" + typeof(obj[prop]) + ") = " + obj[prop]);

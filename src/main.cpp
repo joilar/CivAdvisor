@@ -54,12 +54,12 @@ int main(int argc, char *argv[])
 
     QSqlQuery query;
     query.setForwardOnly(true);
-    query.exec("SELECT * from cards");
+    query.exec("SELECT * from advances");
 
     if (hasQuerySize) {
-        out << "Querying cards (" << query.size() << " results):" << endl;
+        out << "Querying advances (" << query.size() << " results):" << endl;
     } else {
-        out << "Querying cards:" << endl;
+        out << "Querying advances:" << endl;
     }
 
     QStringList columns;
@@ -71,39 +71,39 @@ int main(int argc, char *argv[])
         columns.append(record.fieldName(i));
     }
 
-    QList<QObject*> cards;
+    QList<QObject*> advances;
 
     while(query.next()) {
-        Civilization::Object *card = new Civilization::Object();
+        Civilization::Object *advance = new Civilization::Object();
 
-        out << "card " << cards.size() << ":";
+        out << "advance " << advances.size() << ":";
 
         for (int i = 0; i < columns.size(); i++) {
             out << " " << columns[i] << ": " << query.value(i).toString();
             QVariant v(query.value(i).toString());
-            card->setProperty(columns[i].toLatin1().data(), v);
+            advance->setProperty(columns[i].toLatin1().data(), v);
         }
 
         out << endl;
 
-        cards.append(card);
+        advances.append(advance);
     }
 
-    out << cards.size() << " results." << endl;
+    out << advances.size() << " results." << endl;
 
-    out << "card 0: " << cards[0]->property("name").toString() << endl;
-    out << "typename: " << cards[0]->property("name").typeName() << endl;
+    out << "advance 0: " << advances[0]->property("name").toString() << endl;
+    out << "typename: " << advances[0]->property("name").typeName() << endl;
 
     out << "properties: ";
-    for(QByteArray str : cards[0]->dynamicPropertyNames()) {
-        out << str << ": " << cards[0]->property(str.data()).toString() << ", ";
+    for(QByteArray str : advances[0]->dynamicPropertyNames()) {
+        out << str << ": " << advances[0]->property(str.data()).toString() << ", ";
     }
     out << endl;
 
     db.close();
 
     QQmlApplicationEngine engine;
-    engine.rootContext()->setContextProperty("cardListModel", QVariant::fromValue(cards));
+    engine.rootContext()->setContextProperty("advanceListModel", QVariant::fromValue(advances));
     engine.load(QUrl(QStringLiteral("qrc:/main.qml")));
 
     return app.exec();
