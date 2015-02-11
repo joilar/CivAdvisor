@@ -49,11 +49,6 @@ ApplicationWindow {
         }
     }
 
-    Action {
-        id: advanceAction
-        onTriggered: console.log(source.advance.name)
-    }
-
     RowLayout {
         id: layout
         anchors.fill: parent
@@ -81,6 +76,8 @@ ApplicationWindow {
                         renderType: Text.NativeRendering
                     }
                 }
+
+                Component.onCompleted: advanceAction.trigger(currentItem)
             }
 
             Component.onCompleted: {
@@ -93,9 +90,43 @@ ApplicationWindow {
         }
 
         Rectangle {
+            id: detailsPane
+            property var advance : QtObject {
+                property string name
+                property string value
+                property string text
+            }
+
             color: "lightgreen"
             Layout.fillHeight: true
             Layout.fillWidth: true
+
+            Column {
+                anchors.fill: parent
+                spacing: 4
+
+                Text {
+                    text: "Name: " + detailsPane.advance.name
+                    renderType: Text.NativeRendering
+                }
+
+                Text {
+                    text: "Value: " + detailsPane.advance.value
+                    renderType: Text.NativeRendering
+                }
+
+                Text {
+                    width: parent.width
+                    text: "Text: " + detailsPane.advance.text
+                    renderType: Text.NativeRendering
+                    wrapMode: Text.Wrap
+                }
+            }
         }
+    }
+
+    Action {
+        id: advanceAction
+        onTriggered: detailsPane.advance = source.advance
     }
 }
