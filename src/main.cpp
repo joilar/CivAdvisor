@@ -91,15 +91,6 @@ int main(int argc, char *argv[])
 
     out << advances.size() << " results." << endl;
 
-    out << "advance 0: " << advances[0]->property("name").toString() << endl;
-    out << "typename: " << advances[0]->property("name").typeName() << endl;
-
-    out << "properties: ";
-    for(QByteArray str : advances[0]->dynamicPropertyNames()) {
-        out << str << ": " << advances[0]->property(str.data()).toString() << ", ";
-    }
-    out << endl;
-
     db.close();
 
     QQmlApplicationEngine engine;

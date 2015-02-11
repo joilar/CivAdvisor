@@ -79,14 +79,6 @@ ApplicationWindow {
 
                 Component.onCompleted: advanceAction.trigger(currentItem)
             }
-
-            Component.onCompleted: {
-                var obj = advanceListModel[0];
-                print("obj is " + typeof(obj));
-                for (var prop in obj) {
-                    print(prop += " (" + typeof(obj[prop]) + ") = " + obj[prop]);
-                }
-            }
         }
 
         Rectangle {
