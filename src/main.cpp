@@ -20,11 +20,12 @@
 #include <QTextStream>
 #include <QtSql>
 
+#include "application.h"
 #include "civ/advance.h"
 
 int main(int argc, char *argv[])
 {
-    QApplication app(argc, argv);
+    Civilization::Application app(argc, argv);
 
     QTextStream out(stdout);
     out << "Hello world!" << endl;
