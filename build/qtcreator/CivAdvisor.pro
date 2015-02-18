@@ -5,13 +5,15 @@ QT += qml quick widgets sql
 HEADERS += \
     ../../src/civ/object.h \
     ../../src/civ/advance.h \
-    ../../src/application.h
+    ../../src/application.h \
+    ../../src/civ/group.h
 
 SOURCES += \
     ../../src/main.cpp \
     ../../src/civ/object.cpp \
     ../../src/civ/advance.cpp \
-    ../../src/application.cpp
+    ../../src/application.cpp \
+    ../../src/civ/group.cpp
 
 RESOURCES += \
     ../../ui/qml.qrc
