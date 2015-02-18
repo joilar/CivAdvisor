@@ -26,12 +26,20 @@ namespace Civilization {
 class Civilization::Application : public QApplication
 {
     Q_OBJECT
+    Q_PROPERTY(QList<QObject*> advances READ advances)
+
 public:
     Application(int & argc, char ** argv);
+
+    void initialize ();
+    const QList<QObject*>& advances() const { return m_advances; }
 
 signals:
 
 public slots:
+
+private:
+    QList<QObject*> m_advances;
 
 };
 

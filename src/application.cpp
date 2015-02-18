@@ -14,11 +14,84 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <QTextStream>
+#include <QtSql>
+
 #include "application.h"
+#include "civ/advance.h"
 
 using namespace Civilization;
 
 Application::Application(int &argc, char **argv) :
-    QApplication(argc, argv)
+    QApplication(argc, argv),
+    m_advances()
 {
+}
+
+void Application::initialize () {
+
+    QTextStream out(stdout);
+    out << "Hello world!" << endl;
+
+    QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE");
+    db.setDatabaseName("basic.sqlite");
+    bool ok = db.open();
+
+    out << "What is the database name? " << db.databaseName() << endl;
+    out << "Did I connect to " << db.databaseName() << "? " << ok << endl;
+    out << "Is the connection valid? " << db.isValid() << endl;
+    out << "Is the connection open? " << db.isOpen() << endl;
+    out << "What is the driver name? " << db.driverName() << endl;
+    out << "What is the host name? " << db.hostName() << endl;
+    out << "What is the connection name? " << db.connectionName() << endl;
+    out << "What are the connection options? " << db.connectOptions() << endl;
+
+    bool hasQuerySize = db.driver()->hasFeature(QSqlDriver::QuerySize);
+    out << "Does sqlite support querying the result set size? " << hasQuerySize << endl;
+
+    out << "Tables:";
+    QStringList tables = db.tables();
+    foreach (QString table, tables) {
+        out << " " << table;
+    }
+    out << endl;
+
+    QSqlQuery query;
+    query.setForwardOnly(true);
+    query.exec("SELECT * from advances");
+
+    if (hasQuerySize) {
+        out << "Querying advances (" << query.size() << " results):" << endl;
+    } else {
+        out << "Querying advances:" << endl;
+    }
+
+    QStringList columns;
+
+    QSqlRecord record = query.record();
+    out << "Number of columns: " << record.count() << endl;
+    for (int i = 0; i < record.count(); i++) {
+        out << "column " << i << ": " << record.fieldName(i) << endl;
+        columns.append(record.fieldName(i));
+    }
+
+    while(query.next()) {
+        Civilization::Advance *advance = new Civilization::Advance();
+
+        out << "advance " << m_advances.size() << ":";
+
+        for (int i = 0; i < columns.size(); i++) {
+            out << " " << columns[i] << ": " << query.value(i).toString();
+            QVariant v(query.value(i).toString());
+            advance->setProperty(columns[i].toLatin1().data(), v);
+        }
+
+        out << endl;
+
+        m_advances.append(advance);
+    }
+
+    out << m_advances.size() << " results." << endl;
+
+    db.close();
 }
