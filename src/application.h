@@ -17,7 +17,10 @@
 #ifndef APPLICATION_H
 #define APPLICATION_H
 
+#include <functional>
 #include <QApplication>
+
+class QSqlDatabase;
 
 namespace Civilization {
     class Application;
@@ -27,12 +30,14 @@ class Civilization::Application : public QApplication
 {
     Q_OBJECT
     Q_PROPERTY(QList<QObject*> advances READ advances)
+    Q_PROPERTY(QList<QObject*> groups READ groups)
 
 public:
     Application(int & argc, char ** argv);
 
     void initialize ();
     const QList<QObject*>& advances() const { return m_advances; }
+    const QList<QObject*>& groups() const { return m_groups; }
 
 signals:
 
@@ -40,7 +45,10 @@ public slots:
 
 private:
     QList<QObject*> m_advances;
+    QList<QObject*> m_groups;
 
+    void dumpDatabaseInfo (const QSqlDatabase&);
+    void loadTable (const QSqlDatabase&, const QString&, std::function<QObject*()>);
 };
 
 #endif // APPLICATION_H

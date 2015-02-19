@@ -19,6 +19,7 @@
 
 #include "application.h"
 #include "civ/advance.h"
+#include "civ/group.h"
 
 using namespace Civilization;
 
@@ -29,16 +30,32 @@ Application::Application(int &argc, char **argv) :
 }
 
 void Application::initialize () {
-
     QTextStream out(stdout);
     out << "Hello world!" << endl;
 
     QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE");
     db.setDatabaseName("basic.sqlite");
-    bool ok = db.open();
+    db.open();
+
+    dumpDatabaseInfo(db);
+
+    loadTable(db, "Advances", [this] {
+        m_advances.append(new Advance(this));
+        return m_advances.last();
+    });
+
+    loadTable(db, "Groups", [this] {
+        m_groups.append(new Group(this));
+        return m_groups.last();
+    });
+
+    db.close();
+}
+
+void Application::dumpDatabaseInfo (const QSqlDatabase& db) {
+    QTextStream out(stdout);
 
     out << "What is the database name? " << db.databaseName() << endl;
-    out << "Did I connect to " << db.databaseName() << "? " << ok << endl;
     out << "Is the connection valid? " << db.isValid() << endl;
     out << "Is the connection open? " << db.isOpen() << endl;
     out << "What is the driver name? " << db.driverName() << endl;
@@ -55,16 +72,20 @@ void Application::initialize () {
         out << " " << table;
     }
     out << endl;
+}
 
-    QSqlQuery query;
+void Application::loadTable (
+    const QSqlDatabase& db,
+    const QString& tableName,
+    std::function<QObject*()> nextObject
+) {
+    QTextStream out(stdout);
+
+    out << "Loading objects from table: " << tableName << endl;
+
+    QSqlQuery query(db);
     query.setForwardOnly(true);
-    query.exec("SELECT * from advances");
-
-    if (hasQuerySize) {
-        out << "Querying advances (" << query.size() << " results):" << endl;
-    } else {
-        out << "Querying advances:" << endl;
-    }
+    query.exec("SELECT * from " + tableName);
 
     QStringList columns;
 
@@ -76,22 +97,14 @@ void Application::initialize () {
     }
 
     while(query.next()) {
-        Civilization::Advance *advance = new Civilization::Advance();
-
-        out << "advance " << m_advances.size() << ":";
+        QObject* object = nextObject();
 
         for (int i = 0; i < columns.size(); i++) {
             out << " " << columns[i] << ": " << query.value(i).toString();
             QVariant v(query.value(i).toString());
-            advance->setProperty(columns[i].toLatin1().data(), v);
+            object->setProperty(columns[i].toLatin1().data(), v);
         }
 
         out << endl;
-
-        m_advances.append(advance);
     }
-
-    out << m_advances.size() << " results." << endl;
-
-    db.close();
 }
